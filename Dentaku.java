@@ -204,4 +204,4 @@ public class Dentaku extends JFrame {//クラス
         //void 戻り値なし
         //main 最初に呼び出されるメソッド、アプリケーション開始メソッド
     }
-}
+}//kokekokeko
