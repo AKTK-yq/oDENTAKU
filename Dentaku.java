@@ -21,7 +21,7 @@ public class Dentaku extends JFrame {//クラス
     String calcOp = "";
     double resultValue;
 
-
+おしるこ
     //コンストラクタ
     public Dentaku() {/*
         メソッド、関数
