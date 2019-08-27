@@ -52,38 +52,6 @@ public class jikken extends JFrame {//クラス
 
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
         result.setHorizontalAlignment(JTextField.RIGHT);
-        //数字ボタンのパネル作成
-//        contentPane.add(panel2, BorderLayout.LINE_START);//contentPane内の真ん中に設置
-//        panel2.setLayout(new GridLayout(4,2));//4行4列の分割
-//        panel2.add(new NumberButton("A"));
-//        panel2.add(new NumberButton("D"));
-//        panel2.add(new NumberButton("B"));
-//        panel2.add(new NumberButton("E"));
-//        panel2.add(new NumberButton("C"));
-//        panel2.add(new NumberButton("F"));
-//        panel2.add(radio1).setBackground(new Color(14, 229, 250));
-//        panel2.add(radio2).setBackground(new Color(26, 214, 250));
-//
-//        contentPane.add(panel, BorderLayout.CENTER);//contentPane内の真ん中に設置
-//        panel.setLayout(new GridLayout(4, 4));//4行4列の分割
-//        //ボタンを左上から上から順に設置
-//        //数字ボタン
-//        panel.add(new NumberButton("7"));
-//        panel.add(new NumberButton("8"));
-//        panel.add(new NumberButton("9"));
-//        panel.add(new CalcButton("÷"));
-//        panel.add(new NumberButton("4"));
-//        panel.add(new NumberButton("5"));
-//        panel.add(new NumberButton("6"));
-//        panel.add(new CalcButton("×"));
-//        panel.add(new NumberButton("1"));
-//        panel.add(new NumberButton("2"));
-//        panel.add(new NumberButton("3"));
-//        panel.add(new CalcButton("－"));
-//        panel.add(new NumberButton("0"));
-//        panel.add(new NumberButton("00"));
-//        panel.add(new NumberButton("."));
-//        panel.add(new CalcButton("＋"));
 
         contentPane.add(panel, BorderLayout.CENTER);//contentPane内の真ん中に設置
         panel.setLayout(new GridLayout(4, 6));//4行4列の分割
