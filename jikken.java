@@ -14,6 +14,7 @@ public class jikken extends JFrame {//クラス
     //Main以外でも使うからここで宣言
     JPanel contentPane = new JPanel();//パネルの作成
     JTextField result = new JTextField("0", 38);//計算結果を示すテキスト領域
+    JMenuBar menubar = new JMenuBar();
 
     //演算子ボタンを押す前にテキスト領域に表示されている数値
     boolean afterCalc = false;
@@ -33,9 +34,16 @@ public class jikken extends JFrame {//クラス
         */
         JPanel panel = new JPanel();//数字用と演算子用のパネル作成
         JPanel textPanel = new JPanel();//テキスト領域用のパネル作成
-        CheckboxGroup cbox = new CheckboxGroup();
-        Checkbox radio16 = new Checkbox("16進数", false, cbox);
-        Checkbox radio10 = new Checkbox("10進数", true, cbox);
+        JMenu hex_dec = new JMenu("進数");
+        menubar.add(hex_dec);
+        JCheckBoxMenuItem menuitem1 =new JCheckBoxMenuItem("10進数");
+        JCheckBoxMenuItem menuitem2 =new JCheckBoxMenuItem("16進数");
+        hex_dec.add(menuitem1);
+        hex_dec.add(menuitem2);
+        setJMenuBar(menubar);
+//        CheckboxGroup cbox = new CheckboxGroup();
+//        Checkbox radio16 = new Checkbox("16進数", false, cbox);
+//        Checkbox radio10 = new Checkbox("10進数", true, cbox);
         BorderLayout layout1 = new BorderLayout();//新しいボーダレイアウトの構成
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ｘボタンで終了
         setTitle("電卓");//タイトル
@@ -45,9 +53,7 @@ public class jikken extends JFrame {//クラス
         contentPane.setLayout(layout1);
         //contentPaneをフレームのパネルとして設定
         //テキスト領域を作成
-        textPanel.setLayout(new GridLayout(4, 1));//縦列
-        textPanel.add(radio10).setBackground(new Color(16, 190, 250));
-        textPanel.add(radio16).setBackground(new Color(16, 190, 250));
+        textPanel.setLayout(new GridLayout(2, 1));//縦列
         textPanel.add(result);
         textPanel.add(new CalcButton("C")).setBackground(new Color(250, 119, 118));
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
