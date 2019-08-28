@@ -1,18 +1,15 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.min;
 import static java.lang.String.valueOf;
 
-public class jikken extends JFrame {//クラス
+public class jikken_double extends JFrame {//クラス
     //Main以外でも使うからここで宣言
     JPanel contentPane = new JPanel();//パネルの作成
     JTextField result = new JTextField("0", 38);//計算結果を示すテキスト領域
@@ -29,108 +26,49 @@ public class jikken extends JFrame {//クラス
     BigDecimal POSITIVE_miMAX = new BigDecimal("1E-9999");
 
     //コンストラクタ
-    public jikken() {/*
+    public jikken_double() {/*
         メソッド、関数
         Mainの構成要素
         */
         JPanel panel = new JPanel();//数字用と演算子用のパネル作成
-        JPanel panel2 = new JPanel();
         JPanel textPanel = new JPanel();//テキスト領域用のパネル作成
-        CheckboxGroup cbox = new CheckboxGroup();
-        Checkbox radio16 = new Checkbox("16進数", false, cbox);
-        Checkbox radio10 = new Checkbox("10進数", true, cbox);
+
         BorderLayout layout1 = new BorderLayout();//新しいボーダレイアウトの構成
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ｘボタンで終了
         setTitle("電卓");//タイトル
-        setSize(400, 400);//縦横比
+        setSize(300, 300);//縦横比
         setLocationRelativeTo(null);//nullで真ん中表示
         setContentPane(contentPane);
         contentPane.setLayout(layout1);
         //contentPaneをフレームのパネルとして設定
         //テキスト領域を作成
-        textPanel.setLayout(new GridLayout(4, 1));//縦列
-        textPanel.add(radio10).setBackground(new Color(16, 190, 250));
-        textPanel.add(radio16).setBackground(new Color(16, 190, 250));
+        textPanel.setLayout(new GridLayout(2, 0));//縦列
         textPanel.add(result);
         textPanel.add(new CalcButton("C")).setBackground(new Color(250, 119, 118));
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
         result.setHorizontalAlignment(JTextField.RIGHT);
+        //数字ボタンのパネル作成
         contentPane.add(panel, BorderLayout.CENTER);//contentPane内の真ん中に設置
-        panel.setLayout(new GridLayout(4, 3));//4行4列の分割
-        contentPane.add(panel2, BorderLayout.EAST);
-        GridBagLayout layout = new GridBagLayout();
-        panel2.setLayout(layout);
-        GridBagConstraints gbc = new GridBagConstraints();
-        NumberButton button1 = new NumberButton("A");
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button1, gbc);
-        NumberButton button2 = new NumberButton("B");
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button2, gbc);
-        NumberButton button3 = new NumberButton("C");
-        gbc.gridy = 3;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button3, gbc);
-        NumberButton button4 = new NumberButton("D");
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button4, gbc);
-        NumberButton button5 = new NumberButton("E");
-        gbc.gridy = 5;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button5, gbc);
-        NumberButton button6 = new NumberButton("F");
-        gbc.gridy = 6;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button6, gbc);
-        CalcButton button7 = new CalcButton("+");
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button7, gbc);
-        CalcButton button8 = new CalcButton("-");
-        gbc.gridx = 2;
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button8, gbc);
-        CalcButton button9 = new CalcButton("×");
-        gbc.gridx = 2;
-        gbc.gridy = 3;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button9, gbc);
-        CalcButton button10 = new CalcButton("÷");
-        gbc.gridx = 2;
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button10, gbc);
-
-        panel2.add(button1);
-        panel2.add(button2);
-        panel2.add(button3);
-        panel2.add(button4);
-        panel2.add(button5);
-        panel2.add(button6);
-        panel2.add(button7);
-        panel2.add(button8);
-        panel2.add(button9);
-        panel2.add(button10);
-
+        panel.setLayout(new GridLayout(4, 4));//4行4列の分割
         //ボタンを左上から上から順に設置
-        //数字ボタン
+
+
         panel.add(new NumberButton("7"));
         panel.add(new NumberButton("8"));
         panel.add(new NumberButton("9"));
+        panel.add(new CalcButton("÷"));
         panel.add(new NumberButton("4"));
         panel.add(new NumberButton("5"));
         panel.add(new NumberButton("6"));
+        panel.add(new CalcButton("×"));
         panel.add(new NumberButton("1"));
         panel.add(new NumberButton("2"));
         panel.add(new NumberButton("3"));
+        panel.add(new CalcButton("－"));
         panel.add(new NumberButton("0"));
         panel.add(new NumberButton("00"));
         panel.add(new NumberButton("."));
+        panel.add(new CalcButton("＋"));
 
         contentPane.add(new CalcButton("＝"), BorderLayout.SOUTH);//下に配置
         setVisible(true);//表示・非表示
@@ -198,12 +136,9 @@ public class jikken extends JFrame {//クラス
             } else if (this.getText().equals("＋") || this.getText().equals("－")
                     || this.getText().equals("×") || this.getText().equals("÷")
                     || this.getText().equals("＝")) {
-                //＝が入っていて+-x÷押したら格納していた演算子をいったん削除
+                //＝が入っていて+-x÷押したらー
                 if (calcOp2.equals("＝")) {
-                    if (!this.getText().equals("＝")) {
-                        calcOp = "";
-                    }
-                } else {
+                }else{
                     try {
                         //演算子入力後のテキスト領域の文字を代入
                         value = new BigDecimal(result.getText());
@@ -215,7 +150,7 @@ public class jikken extends JFrame {//クラス
                 if (calcOp.equals("＋") || calcOp.equals("－") || calcOp.equals("×") ||
                         calcOp.equals("÷")) {
 
-                    if (!calcOp2.equals("＝")) {
+                    if(!calcOp2.equals("＝")){
                         try {
                             //演算子入力後のテキスト領域の文字を代入
                             value = new BigDecimal(result.getText());
@@ -243,6 +178,7 @@ public class jikken extends JFrame {//クラス
                                     resultValue.add(value);
                             break;
                     }
+
                     if (calcOp.equals("÷") && (parseDouble(valueOf(value)) == 0)) {
                         //押された演算子が÷で演算子入力後に代入された値が0だったら
                         result.setText("0で割ることはできません");
@@ -284,7 +220,8 @@ public class jikken extends JFrame {//クラス
                                 || (resultValue2.compareTo(BigDecimal.valueOf(-0.001)) < 0
                                 && resultValue2.compareTo(BigDecimal.valueOf(-9999999999999999d)) > 0)
                                 || resultValue2.equals(BigDecimal.ZERO)) {
-                            result.setText(resultValue2.toPlainString());
+                            DecimalFormat format1 = new DecimalFormat("0.################");
+                            result.setText(format1.format(resultValue2));
                         } else {
                             //指数表記にして表示
                             DecimalFormat format1 = new DecimalFormat("#.###############E0");
@@ -309,6 +246,6 @@ public class jikken extends JFrame {//クラス
     }
 
     public static void main(String[] args) {
-        new jikken();//Javaアプリケーションでの起動
+        new jikken_double();//Javaアプリケーションでの起動
     }
 }
