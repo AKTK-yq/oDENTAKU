@@ -34,7 +34,6 @@ public class jikken extends JFrame {//クラス
         Mainの構成要素
         */
         JPanel panel = new JPanel();//数字用と演算子用のパネル作成
-        JPanel panel2 = new JPanel();
         JPanel textPanel = new JPanel();//テキスト領域用のパネル作成
         CheckboxGroup cbox = new CheckboxGroup();
         Checkbox radio16 = new Checkbox("16進数", false, cbox);
@@ -56,81 +55,33 @@ public class jikken extends JFrame {//クラス
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
         result.setHorizontalAlignment(JTextField.RIGHT);
         contentPane.add(panel, BorderLayout.CENTER);//contentPane内の真ん中に設置
-        panel.setLayout(new GridLayout(4, 3));//4行4列の分割
-        contentPane.add(panel2, BorderLayout.EAST);
-        GridBagLayout layout = new GridBagLayout();
-        panel2.setLayout(layout);
-        GridBagConstraints gbc = new GridBagConstraints();
-        NumberButton button1 = new NumberButton("A");
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button1, gbc);
-        NumberButton button2 = new NumberButton("B");
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button2, gbc);
-        NumberButton button3 = new NumberButton("C");
-        gbc.gridy = 3;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button3, gbc);
-        NumberButton button4 = new NumberButton("D");
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button4, gbc);
-        NumberButton button5 = new NumberButton("E");
-        gbc.gridy = 5;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button5, gbc);
-        NumberButton button6 = new NumberButton("F");
-        gbc.gridy = 6;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button6, gbc);
-        CalcButton button7 = new CalcButton("+");
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button7, gbc);
-        CalcButton button8 = new CalcButton("-");
-        gbc.gridx = 2;
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button8, gbc);
-        CalcButton button9 = new CalcButton("×");
-        gbc.gridx = 2;
-        gbc.gridy = 3;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button9, gbc);
-        CalcButton button10 = new CalcButton("÷");
-        gbc.gridx = 2;
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        layout.setConstraints(button10, gbc);
-
-        panel2.add(button1);
-        panel2.add(button2);
-        panel2.add(button3);
-        panel2.add(button4);
-        panel2.add(button5);
-        panel2.add(button6);
-        panel2.add(button7);
-        panel2.add(button8);
-        panel2.add(button9);
-        panel2.add(button10);
-
+        panel.setLayout(new GridLayout(4, 4));//4行4列の分割
         //ボタンを左上から上から順に設置
         //数字ボタン
+        panel.add(new NumberButton("B"));
+        panel.add(new NumberButton("C"));
+        panel.add(new NumberButton("D"));
+        panel.add(new NumberButton("E"));
+        panel.add(new NumberButton("F"));
+        panel.add(new CalcButton("÷"));
+        panel.add(new NumberButton("6"));
         panel.add(new NumberButton("7"));
         panel.add(new NumberButton("8"));
         panel.add(new NumberButton("9"));
-        panel.add(new NumberButton("4"));
-        panel.add(new NumberButton("5"));
-        panel.add(new NumberButton("6"));
+        panel.add(new NumberButton("A"));
+        panel.add(new CalcButton("×"));
         panel.add(new NumberButton("1"));
         panel.add(new NumberButton("2"));
         panel.add(new NumberButton("3"));
+        panel.add(new NumberButton("4"));
+        panel.add(new NumberButton("5"));
+        panel.add(new CalcButton("－"));
         panel.add(new NumberButton("0"));
         panel.add(new NumberButton("00"));
         panel.add(new NumberButton("."));
+        panel.add(new NumberButton("√"));
+        panel.add(new NumberButton("±"));
+        panel.add(new CalcButton("＋"));
 
         contentPane.add(new CalcButton("＝"), BorderLayout.SOUTH);//下に配置
         setVisible(true);//表示・非表示
