@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.min;
@@ -78,8 +76,8 @@ public class jikken extends JFrame {//クラス
         panel.add(new CalcButton("－"));
         panel.add(new NumberButton("0"));
         panel.add(new NumberButton("00"));
-        panel.add(new NumberButton("."));
-        panel.add(new NumberButton("√"));
+        panel.add(new NumberButton(".")).setForeground(Color.LIGHT_GRAY);;
+        panel.add(new NumberButton("√")).setForeground(Color.LIGHT_GRAY);
         panel.add(new NumberButton("±"));
         panel.add(new CalcButton("＋"));
 
