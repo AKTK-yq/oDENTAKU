@@ -12,7 +12,8 @@ import static java.lang.String.valueOf;
 
 public class jikken extends JFrame {//クラス
     //Main以外でも使うからここで宣言
-    JPanel contentPane = new JPanel();//パネルの作成
+    JPanel contentPane = new JPanel(new GridBagLayout());//パネルの作成
+    JPanel textPanel = new JPanel();
     JTextField result = new JTextField("0", 38);//計算結果を示すテキスト領域
     JMenuBar menubar = new JMenuBar();
 
@@ -33,61 +34,94 @@ public class jikken extends JFrame {//クラス
         Mainの構成要素
         */
         JPanel panel = new JPanel();//数字用と演算子用のパネル作成
-        JPanel textPanel = new JPanel();//テキスト領域用のパネル作成
-        JMenu hex_dec = new JMenu("進数");
-        menubar.add(hex_dec);
-        JCheckBoxMenuItem menuitem1 =new JCheckBoxMenuItem("10進数");
-        JCheckBoxMenuItem menuitem2 =new JCheckBoxMenuItem("16進数");
-        hex_dec.add(menuitem1);
-        hex_dec.add(menuitem2);
-        setJMenuBar(menubar);
-//        CheckboxGroup cbox = new CheckboxGroup();
-//        Checkbox radio16 = new Checkbox("16進数", false, cbox);
-//        Checkbox radio10 = new Checkbox("10進数", true, cbox);
+        // JPanel textPanel = new JPanel();//テキスト領域用のパネル作成
+        JPanel equalPanel = new JPanel();
+        CheckboxGroup cbox = new CheckboxGroup();
         BorderLayout layout1 = new BorderLayout();//新しいボーダレイアウトの構成
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ｘボタンで終了
         setTitle("電卓");//タイトル
         setSize(400, 400);//縦横比
+        setResizable(false);
         setLocationRelativeTo(null);//nullで真ん中表示
         setContentPane(contentPane);
         contentPane.setLayout(layout1);
         //contentPaneをフレームのパネルとして設定
+        Checkbox radio16 = new Checkbox("16進数", false, cbox);//16進数ボタン
+        Checkbox radio10 = new Checkbox("10進数", true, cbox);//10進数ボタン
+        menubar.setLayout(new FlowLayout(FlowLayout.LEFT));//左寄せ
+        menubar.add(radio10);//メニューバーに追加
+        menubar.add(radio16);//同上
+        setJMenuBar(menubar);//画面にセット
         //テキスト領域を作成
-        textPanel.setLayout(new GridLayout(2, 1));//縦列
-        textPanel.add(result);
-        textPanel.add(new CalcButton("C")).setBackground(new Color(250, 119, 118));
+        textPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 0.5;
+        gbc.weighty = 1;   // 高さ
+        gbc.fill = GridBagConstraints.BOTH;   // ギャップを詰める
+
+        gbc.gridx = 0;//テキストパネル
+        gbc.gridy = 0;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;//最後
+        gbc.fill = GridBagConstraints.HORIZONTAL;//なぜか幅がほとんど伸びない
+        result.setFont(new Font("Arial", Font.PLAIN, 25));
+        textPanel.add(result, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;//なぜか幅がほとんど伸びない
+        textPanel.add(new CalcButton("C"), gbc);
+//        textPanel.add(new CalcButton("C").setBackground(new Color(250, 120, 120)),gbc);
+
+
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        textPanel.add(new NumberButton("A"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        textPanel.add(new NumberButton("B"), gbc);
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        textPanel.add(new NumberButton("C"), gbc);
+        gbc.gridx = 3;
+        gbc.gridy = 2;
+        textPanel.add(new NumberButton("D"), gbc);
+        gbc.gridx = 4;
+        gbc.gridy = 2;
+        textPanel.add(new NumberButton("E"), gbc);
+        gbc.gridx = 5;
+        gbc.gridy = 2;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        textPanel.add(new NumberButton("F"), gbc);
+
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
         result.setHorizontalAlignment(JTextField.RIGHT);
         contentPane.add(panel, BorderLayout.CENTER);//contentPane内の真ん中に設置
         panel.setLayout(new GridLayout(4, 4));//4行4列の分割
         //ボタンを左上から上から順に設置
         //数字ボタン
-        panel.add(new NumberButton("B"));
-        panel.add(new NumberButton("C"));
-        panel.add(new NumberButton("D"));
-        panel.add(new NumberButton("E"));
-        panel.add(new NumberButton("F"));
-        panel.add(new CalcButton("÷"));
-        panel.add(new NumberButton("6"));
         panel.add(new NumberButton("7"));
         panel.add(new NumberButton("8"));
         panel.add(new NumberButton("9"));
-        panel.add(new NumberButton("A"));
+        panel.add(new CalcButton("÷"));
+        panel.add(new NumberButton("4"));
+        panel.add(new NumberButton("5"));
+        panel.add(new NumberButton("6"));
         panel.add(new CalcButton("×"));
         panel.add(new NumberButton("1"));
         panel.add(new NumberButton("2"));
         panel.add(new NumberButton("3"));
-        panel.add(new NumberButton("4"));
-        panel.add(new NumberButton("5"));
         panel.add(new CalcButton("－"));
         panel.add(new NumberButton("0"));
         panel.add(new NumberButton("00"));
-        panel.add(new NumberButton(".")).setForeground(Color.LIGHT_GRAY);;
-        panel.add(new NumberButton("√")).setForeground(Color.LIGHT_GRAY);
-        panel.add(new NumberButton("±"));
+        panel.add(new NumberButton("."));
         panel.add(new CalcButton("＋"));
 
-        contentPane.add(new CalcButton("＝"), BorderLayout.SOUTH);//下に配置
+        equalPanel.setLayout(new GridLayout(1, 1));
+        contentPane.add(equalPanel, BorderLayout.SOUTH);
+        equalPanel.add(new CalcButton("＝")).setFont(new Font("", Font.PLAIN, 15));
+
+        ;//下に配置
         setVisible(true);//表示・非表示
     }
 
@@ -140,6 +174,11 @@ public class jikken extends JFrame {//クラス
 
         public void actionPerformed(ActionEvent e) {
 
+            if(new CalcButton("").equals("C")){//Cボタンの設定をしたい
+                setFont(new Font("", Font.PLAIN, 15));
+                setBackground(new Color(250, 120, 120));
+
+            }
             //クリアボタンの設定
             if (this.getText().equals("C")) {
                 //初期化

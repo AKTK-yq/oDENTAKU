@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,42 +33,57 @@ public class jikken_double extends JFrame {//クラス
         */
         JPanel panel = new JPanel();//数字用と演算子用のパネル作成
         JPanel textPanel = new JPanel();//テキスト領域用のパネル作成
-
         BorderLayout layout1 = new BorderLayout();//新しいボーダレイアウトの構成
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ｘボタンで終了
         setTitle("電卓");//タイトル
-        setSize(300, 300);//縦横比
+        setSize(400, 400);//縦横比
         setLocationRelativeTo(null);//nullで真ん中表示
         setContentPane(contentPane);
         contentPane.setLayout(layout1);
         //contentPaneをフレームのパネルとして設定
+        JMenuBar menubar = new JMenuBar();
+        JMenu menu1 = new JMenu("進数");
+        menubar.add(menu1);
+        JRadioButtonMenuItem rmi1 = new JRadioButtonMenuItem("16進数");
+        JRadioButtonMenuItem rmi2 = new JRadioButtonMenuItem("10進数");
+        rmi2.setSelected(true);
+        ButtonGroup rmig = new ButtonGroup();
+        rmig.add(rmi1);
+        rmig.add(rmi2);
+        menu1.add(rmi1);
+        menu1.add(rmi2);
+        setJMenuBar(menubar);
+
         //テキスト領域を作成
-        textPanel.setLayout(new GridLayout(2, 0));//縦列
+        textPanel.setLayout(new GridLayout(3, 1));//縦列
         textPanel.add(result);
         textPanel.add(new CalcButton("C")).setBackground(new Color(250, 119, 118));
+        textPanel.add(new CalcButton("HEX⇔DEC")).setBackground(new Color(100, 205, 250));
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
         result.setHorizontalAlignment(JTextField.RIGHT);
-        //数字ボタンのパネル作成
         contentPane.add(panel, BorderLayout.CENTER);//contentPane内の真ん中に設置
         panel.setLayout(new GridLayout(4, 4));//4行4列の分割
         //ボタンを左上から上から順に設置
-
-
-        panel.add(new NumberButton("7"));
+        //数字ボタン
+        panel.add(new NumberButton("C"));
+        panel.add(new NumberButton("D"));
+        panel.add(new NumberButton("E"));
+        panel.add(new NumberButton("F"));
+        panel.add(new CalcButton("÷"));
         panel.add(new NumberButton("8"));
         panel.add(new NumberButton("9"));
-        panel.add(new CalcButton("÷"));
+        panel.add(new NumberButton("A"));
+        panel.add(new NumberButton("B"));
+        panel.add(new CalcButton("×"));
         panel.add(new NumberButton("4"));
         panel.add(new NumberButton("5"));
         panel.add(new NumberButton("6"));
-        panel.add(new CalcButton("×"));
+        panel.add(new NumberButton("7"));
+        panel.add(new CalcButton("－"));
+        panel.add(new NumberButton("0"));
         panel.add(new NumberButton("1"));
         panel.add(new NumberButton("2"));
         panel.add(new NumberButton("3"));
-        panel.add(new CalcButton("－"));
-        panel.add(new NumberButton("0"));
-        panel.add(new NumberButton("00"));
-        panel.add(new NumberButton("."));
         panel.add(new CalcButton("＋"));
 
         contentPane.add(new CalcButton("＝"), BorderLayout.SOUTH);//下に配置
@@ -136,9 +152,12 @@ public class jikken_double extends JFrame {//クラス
             } else if (this.getText().equals("＋") || this.getText().equals("－")
                     || this.getText().equals("×") || this.getText().equals("÷")
                     || this.getText().equals("＝")) {
-                //＝が入っていて+-x÷押したらー
+                //＝が入っていて+-x÷押したら格納していた演算子をいったん削除
                 if (calcOp2.equals("＝")) {
-                }else{
+                    if (!this.getText().equals("＝")) {
+                        calcOp = "";
+                    }
+                } else {
                     try {
                         //演算子入力後のテキスト領域の文字を代入
                         value = new BigDecimal(result.getText());
@@ -150,7 +169,7 @@ public class jikken_double extends JFrame {//クラス
                 if (calcOp.equals("＋") || calcOp.equals("－") || calcOp.equals("×") ||
                         calcOp.equals("÷")) {
 
-                    if(!calcOp2.equals("＝")){
+                    if (!calcOp2.equals("＝")) {
                         try {
                             //演算子入力後のテキスト領域の文字を代入
                             value = new BigDecimal(result.getText());
@@ -178,7 +197,6 @@ public class jikken_double extends JFrame {//クラス
                                     resultValue.add(value);
                             break;
                     }
-
                     if (calcOp.equals("÷") && (parseDouble(valueOf(value)) == 0)) {
                         //押された演算子が÷で演算子入力後に代入された値が0だったら
                         result.setText("0で割ることはできません");
@@ -220,8 +238,7 @@ public class jikken_double extends JFrame {//クラス
                                 || (resultValue2.compareTo(BigDecimal.valueOf(-0.001)) < 0
                                 && resultValue2.compareTo(BigDecimal.valueOf(-9999999999999999d)) > 0)
                                 || resultValue2.equals(BigDecimal.ZERO)) {
-                            DecimalFormat format1 = new DecimalFormat("0.################");
-                            result.setText(format1.format(resultValue2));
+                            result.setText(resultValue2.toPlainString());
                         } else {
                             //指数表記にして表示
                             DecimalFormat format1 = new DecimalFormat("#.###############E0");
