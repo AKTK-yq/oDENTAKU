@@ -57,40 +57,39 @@ public class jikken extends JFrame {//クラス
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 0.5;
         gbc.weighty = 1;   // 高さ
-        gbc.fill = GridBagConstraints.BOTH;   // ギャップを詰める
+        gbc.fill = GridBagConstraints.BOTH;   // ギャップ(幅)を詰める
 
         gbc.gridx = 0;//テキストパネル
         gbc.gridy = 0;
         gbc.gridwidth = GridBagConstraints.REMAINDER;//最後
         gbc.fill = GridBagConstraints.HORIZONTAL;//なぜか幅がほとんど伸びない
-        result.setFont(new Font("Arial", Font.PLAIN, 25));
+        result.setFont(new Font("", Font.PLAIN, 20));
         textPanel.add(result, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;//なぜか幅がほとんど伸びない
-        textPanel.add(new CalcButton("C"), gbc);
-//        textPanel.add(new CalcButton("C").setBackground(new Color(250, 120, 120)),gbc);
+        CalcButton i = new CalcButton("C");
+        textPanel.add(i, gbc);
+        i.setFont(new Font("", Font.PLAIN, 15));
+        i.setBackground(new Color(250, 120, 120));
 
-
+        String[]NB ={"A","B","C","D","E","F"
+        };
+        //NB.setFont(new Font("", Font.PLAIN, 15));
         gbc.gridwidth = 1;
         gbc.gridx = 0;
         gbc.gridy = 2;
         textPanel.add(new NumberButton("A"), gbc);
         gbc.gridx = 1;
-        gbc.gridy = 2;
         textPanel.add(new NumberButton("B"), gbc);
         gbc.gridx = 2;
-        gbc.gridy = 2;
         textPanel.add(new NumberButton("C"), gbc);
         gbc.gridx = 3;
-        gbc.gridy = 2;
         textPanel.add(new NumberButton("D"), gbc);
         gbc.gridx = 4;
-        gbc.gridy = 2;
         textPanel.add(new NumberButton("E"), gbc);
         gbc.gridx = 5;
-        gbc.gridy = 2;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         textPanel.add(new NumberButton("F"), gbc);
 
@@ -174,11 +173,6 @@ public class jikken extends JFrame {//クラス
 
         public void actionPerformed(ActionEvent e) {
 
-            if(new CalcButton("").equals("C")){//Cボタンの設定をしたい
-                setFont(new Font("", Font.PLAIN, 15));
-                setBackground(new Color(250, 120, 120));
-
-            }
             //クリアボタンの設定
             if (this.getText().equals("C")) {
                 //初期化
