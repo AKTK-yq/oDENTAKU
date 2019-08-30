@@ -89,51 +89,39 @@ public class Dentaku2 {
 
             switch (i) {
                 case KCLR:
-                    btn[i].addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            result=val1=0;
-                            overflow=false;
-                            display();
-                        }
+                    btn[i].addActionListener(e -> {
+                        result=val1=0;
+                        overflow=false;
+                        display();
                     });
                     break;
                 case KPLS:
-                    btn[i].addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (!overflow) {
-                                val1=calc();
-                                stat=ADD;
-                                result=0;
-                                display("+");
-                            }
+                    btn[i].addActionListener(e -> {
+                        if (!overflow) {
+                            val1=calc();
+                            stat=ADD;
+                            result=0;
+                            display("+");
                         }
                     });
                     break;
                 case KMNS:
-                    btn[i].addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (!overflow) {
-                                val1=calc();
-                                stat=SUB;
-                                result=0;
-                                display("-");
-                            }
+                    btn[i].addActionListener(e -> {
+                        if (!overflow) {
+                            val1=calc();
+                            stat=SUB;
+                            result=0;
+                            display("-");
                         }
                     });
                     break;
                 case KEQU:
-                    btn[i].addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (!overflow) {
-                                result=calc();
-                                stat=NEXT;
-                            }
-                            display();
+                    btn[i].addActionListener(e -> {
+                        if (!overflow) {
+                            result=calc();
+                            stat=NEXT;
                         }
+                        display();
                     });
                     break;
                 default:

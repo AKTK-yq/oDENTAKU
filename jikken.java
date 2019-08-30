@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -34,7 +33,6 @@ public class jikken extends JFrame {//クラス
         Mainの構成要素
         */
         JPanel panel = new JPanel();//数字用と演算子用のパネル作成
-        // JPanel textPanel = new JPanel();//テキスト領域用のパネル作成
         JPanel equalPanel = new JPanel();
         CheckboxGroup cbox = new CheckboxGroup();
         BorderLayout layout1 = new BorderLayout();//新しいボーダレイアウトの構成
@@ -62,36 +60,33 @@ public class jikken extends JFrame {//クラス
         gbc.gridx = 0;//テキストパネル
         gbc.gridy = 0;
         gbc.gridwidth = GridBagConstraints.REMAINDER;//最後
-        gbc.fill = GridBagConstraints.HORIZONTAL;//なぜか幅がほとんど伸びない
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         result.setFont(new Font("", Font.PLAIN, 20));
         textPanel.add(result, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;//なぜか幅がほとんど伸びない
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         CalcButton i = new CalcButton("C");
         textPanel.add(i, gbc);
         i.setFont(new Font("", Font.PLAIN, 15));
         i.setBackground(new Color(250, 120, 120));
 
-        String[]NB ={"A","B","C","D","E","F"
-        };
-        //NB.setFont(new Font("", Font.PLAIN, 15));
-        gbc.gridwidth = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        textPanel.add(new NumberButton("A"), gbc);
-        gbc.gridx = 1;
-        textPanel.add(new NumberButton("B"), gbc);
-        gbc.gridx = 2;
-        textPanel.add(new NumberButton("C"), gbc);
-        gbc.gridx = 3;
-        textPanel.add(new NumberButton("D"), gbc);
-        gbc.gridx = 4;
-        textPanel.add(new NumberButton("E"), gbc);
-        gbc.gridx = 5;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        textPanel.add(new NumberButton("F"), gbc);
+
+        int[] grid_x = {0, 1, 2, 3, 4, 5};
+        int[] grid_y = {2, 2, 2, 2, 2, 2};
+        String[] buttons = {"A", "B", "C", "D", "E", "F"};
+        int height;
+        for (int f = 0; f < 6; f++) {
+            JButton button = new NumberButton(buttons[f]);
+            button.setFont(new Font("", Font.PLAIN, 18));
+            height = button.getMaximumSize().height;
+            button.setMaximumSize(new Dimension(Short.MAX_VALUE, height));
+            gbc.gridwidth = 1;
+            gbc.gridx = grid_x[f];
+            gbc.gridy = grid_y[f];
+            textPanel.add(button, gbc);
+        }
 
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
         result.setHorizontalAlignment(JTextField.RIGHT);
