@@ -23,10 +23,16 @@ public class jikken extends JFrame {//クラス
     String calcOp2 = "";
     BigDecimal resultValue = BigDecimal.ZERO;
     BigDecimal value = BigDecimal.ZERO;
+    BigDecimal NEGATIVE_plMAX = new BigDecimal("-1E9999");//上限下限
+    BigDecimal POSITIVE_plMAX = new BigDecimal("1E9999");
+    BigDecimal NEGATIVE_miMAX = new BigDecimal("-1E-9999");//小数点の上限下限
+    BigDecimal POSITIVE_miMAX = new BigDecimal("1E-9999");
     long resultLongValue = 0;
     long Longvalue = 0;
+    CheckboxGroup cbox = new CheckboxGroup();
     Checkbox radio16; //16進数ボタン
     Checkbox radio10;
+
 
     //コンストラクタ
     public jikken() {/*
@@ -36,8 +42,9 @@ public class jikken extends JFrame {//クラス
 
         JPanel panel = new JPanel();//数字用と演算子用のパネル作成
         JPanel equalPanel = new JPanel();
-        CheckboxGroup cbox = new CheckboxGroup();
+
         BorderLayout layout1 = new BorderLayout();//新しいボーダレイアウトの構成
+        //CardLayout card = new CardLayout();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ｘボタンで終了
         setTitle("電卓");//タイトル
         setSize(400, 400);//縦横比
@@ -53,7 +60,6 @@ public class jikken extends JFrame {//クラス
         menubar.add(radio10);//メニューバーに追加
         menubar.add(radio16);//同上
         setJMenuBar(menubar);//画面にセット
-
 
         //テキスト領域を作成
         textPanel.setLayout(new GridBagLayout());
@@ -113,7 +119,8 @@ public class jikken extends JFrame {//クラス
         panel.add(new CalcButton("－"));
         panel.add(new NumberButton("0"));
         panel.add(new NumberButton("00"));
-        panel.add(new NumberButton(".")).setBackground(Color.LIGHT_GRAY);
+        //panel.add(new NumberButton(".")).setBackground(Color.LIGHT_GRAY);
+        panel.add(new NumberButton("."));
         panel.add(new CalcButton("＋"));
 
         equalPanel.setLayout(new GridLayout(1, 1));
@@ -132,15 +139,17 @@ public class jikken extends JFrame {//クラス
             super(numberKey);//親クラスのコンストラクタJButtonを呼び出す
             addActionListener(this);//数字ボタンにイベント設定
             //押した数字がActionListenerObject(thisで自分自身)
-
         }
 
         //アクションが起きた場合（今回はボタンが押されたとき）
         public void actionPerformed(ActionEvent e) {
 
             if (afterCalc || result.getText().equals("0") || result.getText().equals("00")) {//0と00の時
+
                 if (this.getText().equals(".")) {//小数点ボタン押したら
-                    result.setText("0.");
+                    if(!radio16.getState()) {
+                        result.setText("0.");
+                    }
                 } else {
                     result.setText(this.getText());
                 }
@@ -173,10 +182,12 @@ public class jikken extends JFrame {//クラス
         }
 
         public void actionPerformed(ActionEvent e) {
-            BigDecimal NEGATIVE_plMAX = new BigDecimal("-1E9999");//上限下限
-            BigDecimal POSITIVE_plMAX = new BigDecimal("1E9999");
-            BigDecimal NEGATIVE_miMAX = new BigDecimal("-1E-9999");//小数点の上限下限
-            BigDecimal POSITIVE_miMAX = new BigDecimal("1E-9999");
+
+            if(radio16.getState()) {
+                NEGATIVE_plMAX = new BigDecimal("-4294967295");//上限下限
+                POSITIVE_plMAX = new BigDecimal("4294967295");
+            }
+
             //クリアボタンの設定
             if (this.getText().equals("C")) {
                 //初期化
@@ -199,7 +210,9 @@ public class jikken extends JFrame {//クラス
                     try {
                         //演算子入力後のテキスト領域の文字を代入
                         if (radio16.getState()) {
-                            Longvalue = Integer.parseInt(result.getText(), 10);
+                            Longvalue = Long.parseLong(result.getText(), 10);
+                            final String oct = Long.toOctalString(Longvalue);
+                            value = new BigDecimal(oct);
                         } else {
                             value = new BigDecimal(result.getText());
                         }
@@ -235,8 +248,7 @@ public class jikken extends JFrame {//クラス
                             resultValue = resultValue.subtract(value);
                             break;
                         case "＋":
-                            resultValue =
-                                    resultValue.add(value);
+                            resultValue = resultValue.add(value);
                             break;
                     }
                     if (calcOp.equals("÷") && (parseDouble(valueOf(value)) == 0)) {
@@ -256,7 +268,7 @@ public class jikken extends JFrame {//クラス
                     } else {
                         if (radio16.getState()) {
                             long resultValue2;
-                            resultValue2 = Integer.parseInt(resultValue.toPlainString(),16);
+                            resultValue2 = Long.parseLong(resultValue.toPlainString(), 16);
                             result.setText(String.valueOf(resultValue2));
                         } else {
                             BigDecimal resultValue2;
@@ -296,8 +308,11 @@ public class jikken extends JFrame {//クラス
                 } else {//格納されていなかったら
                     try {
                         if (radio16.getState()) {
-                            resultLongValue = Integer.parseInt(result.getText(),10);
-                        }else{
+                            resultLongValue = Long.parseLong(result.getText(), 16);
+                            final String oct = Long.toOctalString(resultLongValue);
+                            resultValue = new BigDecimal(oct);
+
+                        } else {
                             resultValue = new BigDecimal(result.getText());
 
                         }
@@ -313,6 +328,16 @@ public class jikken extends JFrame {//クラス
             calcOp2 = this.getText();
             afterCalc = true;//演算子ボタンを押したらtrue
         }
+
+//        public void itemStateChanged(ItemEvent e) {
+//            Checkbox selected = cbox.getSelectedCheckbox();
+//
+//            if (selected == radio10) {
+//                card.show(panel, "card1");
+//            } else if (selected == radio16) {
+//                card.show(panel, "card2");
+//            }
+//        }
     }
 
 
