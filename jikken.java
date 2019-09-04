@@ -32,9 +32,11 @@ public class jikken extends JFrame {//クラス
     long resultLongValue = 0;
     long Longvalue = 0;
     CheckboxGroup cbox = new CheckboxGroup();
-    Checkbox radio16; //16進数ボタン
-    Checkbox radio10;
+    JCheckBox radio16; //16進数ボタン
+    JCheckBox radio10;
     JButton dotto_button = new NumberButton(".");
+    JButton hex_button[] = new JButton[6];
+
 
     //コンストラクタ
     public jikken() {/*
@@ -55,8 +57,8 @@ public class jikken extends JFrame {//クラス
         setContentPane(contentPane);
         contentPane.setLayout(layout1);
         //contentPaneをフレームのパネルとして設定
-        radio16 = new Checkbox("16進数", false, cbox);//16進数ボタン
-        radio10 = new Checkbox("10進数", true, cbox);//10進数ボタン
+        radio16 = new JCheckBox("16進数",false,cbox);//16進数ボタン
+        radio10 = new JCheckBox("10進数",true,cbox);//10進数ボタン
         menubar.setLayout(new FlowLayout(FlowLayout.LEFT));//左寄せ
         menubar.add(radio10);//メニューバーに追加
         menubar.add(radio16);//同上
@@ -83,6 +85,7 @@ public class jikken extends JFrame {//クラス
         i.setFont(new Font("", Font.PLAIN, 15));
         i.setBackground(new Color(250, 120, 120));
 
+
         int[] grid_x = {0, 1, 2, 3, 4, 5};
         int[] grid_y = {2, 2, 2, 2, 2, 2};
         String[] buttons = {"A", "B", "C", "D", "E", "F"};
@@ -95,9 +98,12 @@ public class jikken extends JFrame {//クラス
             gbc.gridwidth = 1;
             gbc.gridx = grid_x[f];
             gbc.gridy = grid_y[f];
-            //  card.add(button,gbc);
             textPanel.add(button, gbc);
+            hex_button[f] = button;
+            button.setEnabled(false);
         }
+
+
 
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
         result.setHorizontalAlignment(JTextField.RIGHT);
@@ -133,23 +139,42 @@ public class jikken extends JFrame {//クラス
     }
 
 
-    public class Checkbox extends CheckboxMenuItem implements ItemListener {
-        Checkbox(String checkkey){
-            super(checkkey);
+    public class JCheckBox extends Checkbox implements ItemListener {
+        public JCheckBox(String label, boolean state, CheckboxGroup group) throws HeadlessException {
+            super(label, state, group);
             addItemListener(this);
         }
+
+
         public void itemStateChanged(ItemEvent e) {
-            java.awt.Checkbox selected = cbox.getSelectedCheckbox();
             if (radio16.getState()) {
                 POSITIVE_plMAX = new BigDecimal("9223372036854775807");//限界値をPOSITIVE_MAX9223372036854775807にする
-                long dec = Long.parseLong(result.getText());
-                String resultValue2 = Long.toHexString(dec);
-                result.setText(resultValue2);
+                try {
+                    long dec = Long.parseLong(result.getText());
+                    String resultValue2 = Long.toHexString(dec);
+                    result.setText(resultValue2);
+                }catch (NumberFormatException La){
+                    result.setText("文字大きい");
+                    resultValue =BigDecimal.ZERO;
+                }
                 dotto_button.setBackground(Color.gray);//ボタン灰色（封じられたので）
+                for (JButton button : hex_button) {
+                    button.setEnabled(true);
+                }
             } else {
+                POSITIVE_plMAX = new BigDecimal("1E9999");
+                try{
                 long dec = Long.parseLong(result.getText(), 16);
                 String resultValue2 = String.valueOf(dec);
                 result.setText(resultValue2);
+            }catch (NumberFormatException La){
+                result.setText("文字大きい");
+                resultValue =BigDecimal.ZERO;
+            }
+                dotto_button.setBackground(new JButton().getBackground());;//ボタン灰色（封じられたので）
+                for (JButton button : hex_button) {
+                    button.setEnabled(false);
+                }
             }
         }
     }
@@ -232,8 +257,13 @@ public class jikken extends JFrame {//クラス
                     try {
                         //演算子入力後のテキスト領域の文字を代入
                         if (radio16.getState()) {
-                            Longvalue = Long.parseLong(result.getText(), 16);
-                            value = new BigDecimal(Longvalue);
+                            try {
+                                Longvalue = Long.parseLong(result.getText(), 16);
+                                value = new BigDecimal(Longvalue);
+                            }catch (NumberFormatException La){
+                                result.setText("値が大きすぎるネー♪");
+                                value = BigDecimal.ZERO;
+                            }
                         } else {
                             value = new BigDecimal(result.getText());
                         }
