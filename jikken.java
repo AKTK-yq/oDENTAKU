@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
@@ -16,7 +17,6 @@ public class jikken extends JFrame {//クラス
     JPanel textPanel = new JPanel();
     JTextField result = new JTextField("0", 38);//計算結果を示すテキスト領域
     JMenuBar menubar = new JMenuBar();
-    CardLayout card = new CardLayout();
     GridBagConstraints gbc = new GridBagConstraints();
 
     //演算子ボタンを押す前にテキスト領域に表示されている数値
@@ -34,9 +34,7 @@ public class jikken extends JFrame {//クラス
     CheckboxGroup cbox = new CheckboxGroup();
     Checkbox radio16; //16進数ボタン
     Checkbox radio10;
-
-    JButton button ;
-
+    int radix =10;
     JButton dotto_button = new NumberButton(".");
 
     //コンストラクタ
@@ -49,7 +47,7 @@ public class jikken extends JFrame {//クラス
         JPanel equalPanel = new JPanel();
 
         BorderLayout layout1 = new BorderLayout();//新しいボーダレイアウトの構成
-        //CardLayout card = new CardLayout();
+        CardLayout card = new CardLayout();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ｘボタンで終了
         setTitle("電卓");//タイトル
         setSize(400, 400);//縦横比
@@ -58,14 +56,12 @@ public class jikken extends JFrame {//クラス
         setContentPane(contentPane);
         contentPane.setLayout(layout1);
         //contentPaneをフレームのパネルとして設定
-        //contentPane.setLayout(card);
         radio16 = new Checkbox("16進数", false, cbox);//16進数ボタン
         radio10 = new Checkbox("10進数", true, cbox);//10進数ボタン
         menubar.setLayout(new FlowLayout(FlowLayout.LEFT));//左寄せ
         menubar.add(radio10);//メニューバーに追加
         menubar.add(radio16);//同上
         setJMenuBar(menubar);//画面にセット
-
         //テキスト領域を作成
         textPanel.setLayout(new GridBagLayout());
 
@@ -88,7 +84,6 @@ public class jikken extends JFrame {//クラス
         i.setFont(new Font("", Font.PLAIN, 15));
         i.setBackground(new Color(250, 120, 120));
 
-
         int[] grid_x = {0, 1, 2, 3, 4, 5};
         int[] grid_y = {2, 2, 2, 2, 2, 2};
         String[] buttons = {"A", "B", "C", "D", "E", "F"};
@@ -101,6 +96,7 @@ public class jikken extends JFrame {//クラス
             gbc.gridwidth = 1;
             gbc.gridx = grid_x[f];
             gbc.gridy = grid_y[f];
+            //  card.add(button,gbc);
             textPanel.add(button, gbc);
         }
 
@@ -110,6 +106,8 @@ public class jikken extends JFrame {//クラス
         panel.setLayout(new GridLayout(4, 4));//4行4列の分割
         //ボタンを左上から上から順に設置
         //数字ボタン
+
+
         panel.add(new NumberButton("7"));
         panel.add(new NumberButton("8"));
         panel.add(new NumberButton("9"));
@@ -136,6 +134,27 @@ public class jikken extends JFrame {//クラス
     }
 
 
+    //public class itemStateChanged extends CheckboxMenuItem implements ActionListener {
+
+
+            //buttons.setBackground(Color.gray);//Cardlayoutできなければ
+            // card.show(contentPane, "card1");
+      //  }
+//        public void actionPerformed(ActionEvent actionEvent) {
+//            Checkbox selected = cbox.getSelectedCheckbox();
+//            if (selected == radio16) {
+//                POSITIVE_plMAX = new BigDecimal("9223372036854775807");//限界値をPOSITIVE_MAX9223372036854775807にする
+//                long dec = Long.parseLong(result.getText());
+//                String resultValue2 = Long.toHexString(dec);
+//                result.setText(resultValue2);
+//                dotto_button.setBackground(Color.gray);//ボタン灰色（封じられたので）
+//                //card.show(textPanel, "card2");
+//            } else {
+//                long dec = Long.parseLong(result.getText(), 16);
+//                String resultValue2 = String.valueOf(dec);
+//                result.setText(resultValue2);
+//        }
+//    }
 
     //数字ボタンの定義
     public class NumberButton extends JButton implements ActionListener {//JButtonの継承とアクション設定
@@ -150,25 +169,13 @@ public class jikken extends JFrame {//クラス
         //アクションが起きた場合（今回はボタンが押されたとき）
         public void actionPerformed(ActionEvent e) {
 
-            Checkbox selected = cbox.getSelectedCheckbox();
-            if (selected == radio16) {
-                dotto_button.setEnabled(false);
-//                long dec = Long.parseLong(result.getText());
-//                String resultValue2 = Long.toHexString(dec);
-//                result.setText(resultValue2);
-//                card.show(textPanel, "card2");
-            } else {
-                dotto_button.setEnabled(true);
-//                long dec = Long.parseLong(result.getText(), 16);
-//                String resultValue2 = String.valueOf(dec);
-//                result.setText(resultValue2);
-//                card.show(contentPane, "card1");
-            }
 
             if (afterCalc || result.getText().equals("0") || result.getText().equals("00")) {//0と00の時
 
                 if (this.getText().equals(".")) {//小数点ボタン押したら
-                    result.setText("0.");
+                    if (!radio16.getState()) {
+                        result.setText("0.");
+                    }
                 } else {
                     result.setText(this.getText());
                 }
@@ -180,9 +187,12 @@ public class jikken extends JFrame {//クラス
                     dem += 2;
                 } else if (result.getText().contains(".")) {//.を入力したら
                     dem += 1;
+                } else if (radio16.getState()) {//f16個で0になるため
+                    dem -= 1;
                 }
                 //小数点は1つまで、文字数は16文字まで(最初の0.や.は数に含まない)
-                if ((result.getText().contains(".") && this.getText().equals("."))
+                if ((result.getText().contains(".") || radio16.getState())
+                        && this.getText().equals(".")
                         || result.getText().length() >= 16 + dem) {
                 } else {
                     result.setText(result.getText() + this.getText());//連結1と0押して10
@@ -201,11 +211,6 @@ public class jikken extends JFrame {//クラス
         }
 
         public void actionPerformed(ActionEvent e) {
-
-//            if (radio16.getState()) {//ボタン切り替えで変えたい
-//                NEGATIVE_plMAX = new BigDecimal("-4294967295");//上限下限
-//                POSITIVE_plMAX = new BigDecimal("4294967295");
-//            }
 
             //クリアボタンの設定
             if (this.getText().equals("C")) {
@@ -350,11 +355,8 @@ public class jikken extends JFrame {//クラス
             calcOp2 = this.getText();
             afterCalc = true;//演算子ボタンを押したらtrue
         }
-
-        public void itemStateChanged(ItemEvent e) {
-
-        }
     }
+
     public static void main(String[] args) {
         new jikken();//Javaアプリケーションでの起動
         System.out.println();
