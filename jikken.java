@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
@@ -16,6 +17,7 @@ public class jikken extends JFrame {//クラス
     JTextField result = new JTextField("0", 38);//計算結果を示すテキスト領域
     JMenuBar menubar = new JMenuBar();
     CardLayout card = new CardLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
 
     //演算子ボタンを押す前にテキスト領域に表示されている数値
     boolean afterCalc = false;
@@ -33,6 +35,9 @@ public class jikken extends JFrame {//クラス
     Checkbox radio16; //16進数ボタン
     Checkbox radio10;
 
+    JButton button ;
+
+    JButton dotto_button = new NumberButton(".");
 
     //コンストラクタ
     public jikken() {/*
@@ -63,7 +68,7 @@ public class jikken extends JFrame {//クラス
 
         //テキスト領域を作成
         textPanel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+
         gbc.weightx = 0.5;
         gbc.weighty = 1;   // 高さ
         gbc.fill = GridBagConstraints.BOTH;   // ギャップ(幅)を詰める
@@ -119,17 +124,18 @@ public class jikken extends JFrame {//クラス
         panel.add(new CalcButton("－"));
         panel.add(new NumberButton("0"));
         panel.add(new NumberButton("00"));
-        //panel.add(new NumberButton(".")).setBackground(Color.LIGHT_GRAY);
-        panel.add(new NumberButton("."));
+        panel.add(dotto_button);
         panel.add(new CalcButton("＋"));
 
         equalPanel.setLayout(new GridLayout(1, 1));
         contentPane.add(equalPanel, BorderLayout.SOUTH);
         equalPanel.add(new CalcButton("＝")).setFont(new Font("", Font.PLAIN, 15));
 
-        ;//下に配置
+        //下に配置
         setVisible(true);//表示・非表示
     }
+
+
 
     //数字ボタンの定義
     public class NumberButton extends JButton implements ActionListener {//JButtonの継承とアクション設定
@@ -144,12 +150,25 @@ public class jikken extends JFrame {//クラス
         //アクションが起きた場合（今回はボタンが押されたとき）
         public void actionPerformed(ActionEvent e) {
 
+            Checkbox selected = cbox.getSelectedCheckbox();
+            if (selected == radio16) {
+                dotto_button.setEnabled(false);
+//                long dec = Long.parseLong(result.getText());
+//                String resultValue2 = Long.toHexString(dec);
+//                result.setText(resultValue2);
+//                card.show(textPanel, "card2");
+            } else {
+                dotto_button.setEnabled(true);
+//                long dec = Long.parseLong(result.getText(), 16);
+//                String resultValue2 = String.valueOf(dec);
+//                result.setText(resultValue2);
+//                card.show(contentPane, "card1");
+            }
+
             if (afterCalc || result.getText().equals("0") || result.getText().equals("00")) {//0と00の時
 
                 if (this.getText().equals(".")) {//小数点ボタン押したら
-                    if(!radio16.getState()) {
-                        result.setText("0.");
-                    }
+                    result.setText("0.");
                 } else {
                     result.setText(this.getText());
                 }
@@ -163,7 +182,7 @@ public class jikken extends JFrame {//クラス
                     dem += 1;
                 }
                 //小数点は1つまで、文字数は16文字まで(最初の0.や.は数に含まない)
-                if (result.getText().contains(".") && this.getText().equals(".")
+                if ((result.getText().contains(".") && this.getText().equals("."))
                         || result.getText().length() >= 16 + dem) {
                 } else {
                     result.setText(result.getText() + this.getText());//連結1と0押して10
@@ -183,10 +202,10 @@ public class jikken extends JFrame {//クラス
 
         public void actionPerformed(ActionEvent e) {
 
-            if(radio16.getState()) {
-                NEGATIVE_plMAX = new BigDecimal("-4294967295");//上限下限
-                POSITIVE_plMAX = new BigDecimal("4294967295");
-            }
+//            if (radio16.getState()) {//ボタン切り替えで変えたい
+//                NEGATIVE_plMAX = new BigDecimal("-4294967295");//上限下限
+//                POSITIVE_plMAX = new BigDecimal("4294967295");
+//            }
 
             //クリアボタンの設定
             if (this.getText().equals("C")) {
@@ -210,9 +229,8 @@ public class jikken extends JFrame {//クラス
                     try {
                         //演算子入力後のテキスト領域の文字を代入
                         if (radio16.getState()) {
-                            Longvalue = Long.parseLong(result.getText(), 10);
-                            final String oct = Long.toOctalString(Longvalue);
-                            value = new BigDecimal(oct);
+                            Longvalue = Long.parseLong(result.getText(), 16);
+                            value = new BigDecimal(Longvalue);
                         } else {
                             value = new BigDecimal(result.getText());
                         }
@@ -227,7 +245,12 @@ public class jikken extends JFrame {//クラス
                     if (!calcOp2.equals("＝")) {
                         try {
                             //演算子入力後のテキスト領域の文字を代入
-                            value = new BigDecimal(result.getText());
+                            if (radio16.getState()) {
+                                Longvalue = Long.parseLong(result.getText(), 16);
+                                value = new BigDecimal(Longvalue);
+                            } else {
+                                value = new BigDecimal(result.getText());
+                            }
                         } catch (NumberFormatException d) {
                             value = BigDecimal.valueOf(0);
                         }
@@ -259,6 +282,12 @@ public class jikken extends JFrame {//クラス
                             || resultValue.compareTo(NEGATIVE_plMAX) <= 0) {//上限値、下限値を超えたら
                         result.setText("値が大きすぎます");
                         resultValue = BigDecimal.valueOf(0);
+
+                    } else if (radio16.getState()) {
+                        long dec = Long.parseLong(resultValue.toPlainString());
+                        String resultValue2 = Long.toHexString(dec);
+                        result.setText(resultValue2);
+
                     } else if ((resultValue.compareTo(BigDecimal.ZERO) > 0
                             && resultValue.compareTo(POSITIVE_miMAX) <= 0)//0超えで上限桁数以下
                             || (resultValue.compareTo(BigDecimal.ZERO) < 0
@@ -266,51 +295,44 @@ public class jikken extends JFrame {//クラス
                         result.setText("値が小さすぎます");
                         resultValue = BigDecimal.valueOf(0);
                     } else {
-                        if (radio16.getState()) {
-                            long resultValue2;
-                            resultValue2 = Long.parseLong(resultValue.toPlainString(), 16);
-                            result.setText(String.valueOf(resultValue2));
-                        } else {
-                            BigDecimal resultValue2;
-                            //表示用の変数に代入し、16桁-正数で最終桁を四捨五入
-                            resultValue2 = resultValue.setScale
-                                    (16 - (resultValue.precision() - resultValue.scale()),
-                                            BigDecimal.ROUND_HALF_EVEN);
-                            //文字列の一番右の値が0もしくは結果が0だったら一番右の0を取る
-                            if (resultValue2.scale() > 0 || resultValue2.compareTo(BigDecimal.ZERO) == 0) {
-                                String resultStr = resultValue2.toPlainString();
-                                resultStr = resultStr.substring(0, min(10000, resultStr.length()));
-                                try {
-                                    while (resultStr.substring(resultStr.length() - 1).equals("0")) {
-                                        resultStr = resultStr.substring(0, resultStr.length() - 1);
-                                    }
-                                } catch (StringIndexOutOfBoundsException f) {
-                                    resultValue = BigDecimal.ZERO;
-                                    resultStr = "0";
+                        BigDecimal resultValue2;
+                        //表示用の変数に代入し、16桁-正数で最終桁を四捨五入
+                        resultValue2 = resultValue.setScale
+                                (16 - (resultValue.precision() - resultValue.scale()),
+                                        BigDecimal.ROUND_HALF_EVEN);
+                        //文字列の一番右の値が0もしくは結果が0だったら一番右の0を取る
+                        if (resultValue2.scale() > 0 || resultValue2.compareTo(BigDecimal.ZERO) == 0) {
+                            String resultStr = resultValue2.toPlainString();
+                            resultStr = resultStr.substring(0, min(10000, resultStr.length()));
+                            try {
+                                while (resultStr.substring(resultStr.length() - 1).equals("0")) {
+                                    resultStr = resultStr.substring(0, resultStr.length() - 1);
                                 }
-                                resultValue2 = new BigDecimal(resultStr);
+                            } catch (StringIndexOutOfBoundsException f) {
+                                resultValue = BigDecimal.ZERO;
+                                resultStr = "0";
                             }
-                            //resultStr2に全てを数字表記にして代入
-                            //正数で0.0001超えand99~9未満or負数で-0.001未満and-99~9超え
-                            if ((resultValue2.compareTo(BigDecimal.valueOf(0.001)) > 0
-                                    && resultValue2.compareTo(BigDecimal.valueOf(9999999999999999d)) < 0)
-                                    || (resultValue2.compareTo(BigDecimal.valueOf(-0.001)) < 0
-                                    && resultValue2.compareTo(BigDecimal.valueOf(-9999999999999999d)) > 0)
-                                    || resultValue2.equals(BigDecimal.ZERO)) {
-                                result.setText(resultValue2.toPlainString());
-                            } else {
-                                //指数表記にして表示
-                                DecimalFormat format1 = new DecimalFormat("#.###############E0");
-                                result.setText(format1.format(resultValue2));
-                            }
+                            resultValue2 = new BigDecimal(resultStr);
+                        }
+                        //resultStr2に全てを数字表記にして代入
+                        //正数で0.0001超えand99~9未満or負数で-0.001未満and-99~9超え
+                        if ((resultValue2.compareTo(BigDecimal.valueOf(0.001)) > 0
+                                && resultValue2.compareTo(BigDecimal.valueOf(9999999999999999d)) < 0)
+                                || (resultValue2.compareTo(BigDecimal.valueOf(-0.001)) < 0
+                                && resultValue2.compareTo(BigDecimal.valueOf(-9999999999999999d)) > 0)
+                                || resultValue2.equals(BigDecimal.ZERO)) {
+                            result.setText(resultValue2.toPlainString());
+                        } else {
+                            //指数表記にして表示
+                            DecimalFormat format1 = new DecimalFormat("#.###############E0");
+                            result.setText(format1.format(resultValue2));
                         }
                     }
                 } else {//格納されていなかったら
                     try {
                         if (radio16.getState()) {
                             resultLongValue = Long.parseLong(result.getText(), 16);
-                            final String oct = Long.toOctalString(resultLongValue);
-                            resultValue = new BigDecimal(oct);
+                            resultValue = new BigDecimal(resultLongValue);
 
                         } else {
                             resultValue = new BigDecimal(result.getText());
@@ -329,18 +351,10 @@ public class jikken extends JFrame {//クラス
             afterCalc = true;//演算子ボタンを押したらtrue
         }
 
-//        public void itemStateChanged(ItemEvent e) {
-//            Checkbox selected = cbox.getSelectedCheckbox();
-//
-//            if (selected == radio10) {
-//                card.show(panel, "card1");
-//            } else if (selected == radio16) {
-//                card.show(panel, "card2");
-//            }
-//        }
+        public void itemStateChanged(ItemEvent e) {
+
+        }
     }
-
-
     public static void main(String[] args) {
         new jikken();//Javaアプリケーションでの起動
         System.out.println();
