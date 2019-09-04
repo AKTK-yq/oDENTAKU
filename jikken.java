@@ -34,7 +34,6 @@ public class jikken extends JFrame {//クラス
     CheckboxGroup cbox = new CheckboxGroup();
     Checkbox radio16; //16進数ボタン
     Checkbox radio10;
-    int radix =10;
     JButton dotto_button = new NumberButton(".");
 
     //コンストラクタ
@@ -134,27 +133,26 @@ public class jikken extends JFrame {//クラス
     }
 
 
-    //public class itemStateChanged extends CheckboxMenuItem implements ActionListener {
-
-
-            //buttons.setBackground(Color.gray);//Cardlayoutできなければ
-            // card.show(contentPane, "card1");
-      //  }
-//        public void actionPerformed(ActionEvent actionEvent) {
-//            Checkbox selected = cbox.getSelectedCheckbox();
-//            if (selected == radio16) {
-//                POSITIVE_plMAX = new BigDecimal("9223372036854775807");//限界値をPOSITIVE_MAX9223372036854775807にする
-//                long dec = Long.parseLong(result.getText());
-//                String resultValue2 = Long.toHexString(dec);
-//                result.setText(resultValue2);
-//                dotto_button.setBackground(Color.gray);//ボタン灰色（封じられたので）
-//                //card.show(textPanel, "card2");
-//            } else {
-//                long dec = Long.parseLong(result.getText(), 16);
-//                String resultValue2 = String.valueOf(dec);
-//                result.setText(resultValue2);
-//        }
-//    }
+    public class Checkbox extends CheckboxMenuItem implements ItemListener {
+        Checkbox(String checkkey){
+            super(checkkey);
+            addItemListener(this);
+        }
+        public void itemStateChanged(ItemEvent e) {
+            java.awt.Checkbox selected = cbox.getSelectedCheckbox();
+            if (radio16.getState()) {
+                POSITIVE_plMAX = new BigDecimal("9223372036854775807");//限界値をPOSITIVE_MAX9223372036854775807にする
+                long dec = Long.parseLong(result.getText());
+                String resultValue2 = Long.toHexString(dec);
+                result.setText(resultValue2);
+                dotto_button.setBackground(Color.gray);//ボタン灰色（封じられたので）
+            } else {
+                long dec = Long.parseLong(result.getText(), 16);
+                String resultValue2 = String.valueOf(dec);
+                result.setText(resultValue2);
+            }
+        }
+    }
 
     //数字ボタンの定義
     public class NumberButton extends JButton implements ActionListener {//JButtonの継承とアクション設定
