@@ -48,7 +48,6 @@ public class jikken extends JFrame {//クラス
         JPanel equalPanel = new JPanel();
 
         BorderLayout layout1 = new BorderLayout();//新しいボーダレイアウトの構成
-        CardLayout card = new CardLayout();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ｘボタンで終了
         setTitle("電卓");//タイトル
         setSize(400, 400);//縦横比
@@ -57,8 +56,8 @@ public class jikken extends JFrame {//クラス
         setContentPane(contentPane);
         contentPane.setLayout(layout1);
         //contentPaneをフレームのパネルとして設定
-        radio16 = new JCheckBox("16進数",false,cbox);//16進数ボタン
-        radio10 = new JCheckBox("10進数",true,cbox);//10進数ボタン
+        radio16 = new JCheckBox("16進数", false, cbox);//16進数ボタン
+        radio10 = new JCheckBox("10進数", true, cbox);//10進数ボタン
         menubar.setLayout(new FlowLayout(FlowLayout.LEFT));//左寄せ
         menubar.add(radio10);//メニューバーに追加
         menubar.add(radio16);//同上
@@ -104,7 +103,6 @@ public class jikken extends JFrame {//クラス
         }
 
 
-
         contentPane.add(textPanel, BorderLayout.NORTH);//contentPane内の北に配置
         result.setHorizontalAlignment(JTextField.RIGHT);
         contentPane.add(panel, BorderLayout.CENTER);//contentPane内の真ん中に設置
@@ -147,32 +145,46 @@ public class jikken extends JFrame {//クラス
 
 
         public void itemStateChanged(ItemEvent e) {
-            if (radio16.getState()) {
+            if (radio16.getState()) {//16進数だったら
                 POSITIVE_plMAX = new BigDecimal("9223372036854775807");//限界値をPOSITIVE_MAX9223372036854775807にする
-                try {
-                    long dec = Long.parseLong(result.getText());
-                    String resultValue2 = Long.toHexString(dec);
-                    result.setText(resultValue2);
-                }catch (NumberFormatException La){
-                    result.setText("文字大きい");
-                    resultValue =BigDecimal.ZERO;
+                if (result.getText().contains(".")) {//小数点があったら
+                    result.setText("小数点以下は変換できません");
+                    resultValue = BigDecimal.ZERO;
+                    value = BigDecimal.ZERO;
+                    resultLongValue = 0;
+                    Longvalue = 0;
+                } else {
+                    try {
+                        long dec = Long.parseLong(result.getText());//テキストを取得
+                        String resultValue2 = Long.toHexString(dec);//16進数変換
+                        result.setText(resultValue2);//テキスト代入
+                    } catch (NumberFormatException La) {
+                        resultValue = BigDecimal.ZERO;
+                        value = BigDecimal.ZERO;
+                        resultLongValue = 0;
+                        Longvalue = 0;
+                    }
                 }
-                dotto_button.setBackground(Color.gray);//ボタン灰色（封じられたので）
-                for (JButton button : hex_button) {
+                dotto_button.setBackground(Color.gray);//ボタン灰色
+                for (JButton button : hex_button) {//ボタンを有効
                     button.setEnabled(true);
                 }
             } else {
-                POSITIVE_plMAX = new BigDecimal("1E9999");
-                try{
-                long dec = Long.parseLong(result.getText(), 16);
-                String resultValue2 = String.valueOf(dec);
-                result.setText(resultValue2);
-            }catch (NumberFormatException La){
-                result.setText("文字大きい");
-                resultValue =BigDecimal.ZERO;
-            }
-                dotto_button.setBackground(new JButton().getBackground());;//ボタン灰色（封じられたので）
-                for (JButton button : hex_button) {
+                POSITIVE_plMAX = new BigDecimal("1E9999");//最大値を元に戻す
+                    try {
+                        long dec = Long.parseLong(result.getText(), 16);//テキスト取得と10進数に変換
+                        String resultValue2 = String.valueOf(dec);
+                        result.setText(resultValue2);
+                    } catch (NumberFormatException La) {
+                        result.setText("0");
+                        resultValue = BigDecimal.ZERO;
+                        value = BigDecimal.ZERO;
+                        resultLongValue = 0;
+                        Longvalue = 0;
+                    }
+
+                dotto_button.setBackground(new JButton().getBackground());//ボタン灰色
+                for (JButton button : hex_button) {//A～Fボタン
                     button.setEnabled(false);
                 }
             }
@@ -196,7 +208,7 @@ public class jikken extends JFrame {//クラス
             if (afterCalc || result.getText().equals("0") || result.getText().equals("00")) {//0と00の時
 
                 if (this.getText().equals(".")) {//小数点ボタン押したら
-                    if (!radio16.getState()) {
+                    if (!radio16.getState()) {//小数点以外なら
                         result.setText("0.");
                     }
                 } else {
@@ -253,23 +265,6 @@ public class jikken extends JFrame {//クラス
                     if (!this.getText().equals("＝")) {
                         calcOp = "";
                     }
-                } else {
-                    try {
-                        //演算子入力後のテキスト領域の文字を代入
-                        if (radio16.getState()) {
-                            try {
-                                Longvalue = Long.parseLong(result.getText(), 16);
-                                value = new BigDecimal(Longvalue);
-                            }catch (NumberFormatException La){
-                                result.setText("値が大きすぎるネー♪");
-                                value = BigDecimal.ZERO;
-                            }
-                        } else {
-                            value = new BigDecimal(result.getText());
-                        }
-                    } catch (NumberFormatException d) {
-                        value = BigDecimal.valueOf(0);
-                    }
                 }
                 //演算子が格納されている？
                 if (calcOp.equals("＋") || calcOp.equals("－") || calcOp.equals("×") ||
@@ -290,11 +285,20 @@ public class jikken extends JFrame {//クラス
                     }
                     switch (calcOp) {
                         case "÷": //格納された演算子が÷だったら
-                            try {
-                                resultValue = resultValue.divide
-                                        (value, 100, BigDecimal.ROUND_DOWN);//割り算を行い、100桁目を切り捨て
-                            } catch (ArithmeticException d) {
-                                resultValue = BigDecimal.valueOf(0);
+                            if(radio16.getState()){
+                                try {
+                                    resultValue = resultValue.divide
+                                            (value, 0, BigDecimal.ROUND_DOWN);//割り算を行い、100桁目を切り捨て
+                                } catch (ArithmeticException f){
+                                    resultValue = BigDecimal.ZERO;
+                                }
+                            }else {
+                                try {
+                                    resultValue = resultValue.divide
+                                            (value, 100, BigDecimal.ROUND_DOWN);//割り算を行い、100桁目を切り捨て
+                                } catch (ArithmeticException d) {
+                                    resultValue = BigDecimal.valueOf(0);
+                                }
                             }
                             break;
                         case "×":
@@ -316,10 +320,6 @@ public class jikken extends JFrame {//クラス
                         result.setText("値が大きすぎます");
                         resultValue = BigDecimal.valueOf(0);
 
-                    } else if (radio16.getState()) {
-                        long dec = Long.parseLong(resultValue.toPlainString());
-                        String resultValue2 = Long.toHexString(dec);
-                        result.setText(resultValue2);
 
                     } else if ((resultValue.compareTo(BigDecimal.ZERO) > 0
                             && resultValue.compareTo(POSITIVE_miMAX) <= 0)//0超えで上限桁数以下
@@ -349,7 +349,11 @@ public class jikken extends JFrame {//クラス
                         }
                         //resultStr2に全てを数字表記にして代入
                         //正数で0.0001超えand99~9未満or負数で-0.001未満and-99~9超え
-                        if ((resultValue2.compareTo(BigDecimal.valueOf(0.001)) > 0
+                        if (radio16.getState()) {
+                               long dec = Long.parseLong(resultValue2.toPlainString());
+                                String resultValue3 = Long.toHexString(dec);
+                                result.setText(resultValue3);
+                        }else if ((resultValue2.compareTo(BigDecimal.valueOf(0.001)) > 0
                                 && resultValue2.compareTo(BigDecimal.valueOf(9999999999999999d)) < 0)
                                 || (resultValue2.compareTo(BigDecimal.valueOf(-0.001)) < 0
                                 && resultValue2.compareTo(BigDecimal.valueOf(-9999999999999999d)) > 0)
