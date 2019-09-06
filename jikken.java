@@ -100,6 +100,7 @@ public class jikken extends JFrame {//クラス
             textPanel.add(button, gbc);
             hex_button[f] = button;
             button.setEnabled(false);
+            button.setBackground(new Color(236, 236, 236));
         }
 
 
@@ -146,46 +147,46 @@ public class jikken extends JFrame {//クラス
 
         public void itemStateChanged(ItemEvent e) {
             if (radio16.getState()) {//16進数だったら
+
+                try{
                 POSITIVE_plMAX = new BigDecimal("9223372036854775807");//限界値をPOSITIVE_MAX9223372036854775807にする
-                if (result.getText().contains(".")) {//小数点があったら
-                    result.setText("小数点以下は変換できません");
-                    resultValue = BigDecimal.ZERO;
-                    value = BigDecimal.ZERO;
-                    resultLongValue = 0;
-                    Longvalue = 0;
+                resultValue = BigDecimal.valueOf(Double.parseDouble(result.getText()));
+                BigDecimal result_dotto;
+                        result_dotto = resultValue.setScale(0,BigDecimal.ROUND_DOWN);//小数点以下切捨て
+                if (result_dotto.compareTo(POSITIVE_plMAX) < 0) {
+                    long dec = Long.parseLong(result_dotto.toPlainString());
+                    String resultValue2 = Long.toHexString(dec);
+                    result.setText(resultValue2.toUpperCase());
                 } else {
-                    try {
-                        long dec = Long.parseLong(result.getText());//テキストを取得
-                        String resultValue2 = Long.toHexString(dec);//16進数変換
-                        result.setText(resultValue2);//テキスト代入
-                    } catch (NumberFormatException La) {
-                        resultValue = BigDecimal.ZERO;
-                        value = BigDecimal.ZERO;
-                        resultLongValue = 0;
-                        Longvalue = 0;
-                    }
+                    result.setText("値が大きすぎます");
+                    resultValue = BigDecimal.ZERO;
                 }
-                dotto_button.setBackground(Color.gray);//ボタン灰色
+                dotto_button.setBackground(new Color(236, 236, 236));//ボタン灰色
                 for (JButton button : hex_button) {//ボタンを有効
                     button.setEnabled(true);
+                    button.setBackground(new JButton().getBackground());//ボタン元の色
+                }
+                }catch (NumberFormatException li){
+                    result.setText("値が大きすぎます");
+                    resultValue = BigDecimal.ZERO;
                 }
             } else {
                 POSITIVE_plMAX = new BigDecimal("1E9999");//最大値を元に戻す
-                    try {
-                        long dec = Long.parseLong(result.getText(), 16);//テキスト取得と10進数に変換
-                        String resultValue2 = String.valueOf(dec);
-                        result.setText(resultValue2);
-                    } catch (NumberFormatException La) {
-                        result.setText("0");
-                        resultValue = BigDecimal.ZERO;
-                        value = BigDecimal.ZERO;
-                        resultLongValue = 0;
-                        Longvalue = 0;
-                    }
+                try {
+                    long resultValue2;
+                    resultValue2 = Long.parseLong(result.getText(), 16);
+                    resultValue = BigDecimal.valueOf(resultValue2);
+                    resultValue = resultValue.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_DOWN);
+                    result.setText(resultValue.toPlainString());
+                } catch (NumberFormatException La) {
+                    resultValue = resultValue.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_DOWN);
+                    result.setText(resultValue.toPlainString());
+                }
 
-                dotto_button.setBackground(new JButton().getBackground());//ボタン灰色
+                dotto_button.setBackground(new JButton().getBackground());//ボタン元の色
                 for (JButton button : hex_button) {//A～Fボタン
                     button.setEnabled(false);
+                    button.setBackground(new Color(236, 236, 236));
                 }
             }
         }
@@ -285,14 +286,14 @@ public class jikken extends JFrame {//クラス
                     }
                     switch (calcOp) {
                         case "÷": //格納された演算子が÷だったら
-                            if(radio16.getState()){
+                            if (radio16.getState()) {
                                 try {
                                     resultValue = resultValue.divide
                                             (value, 0, BigDecimal.ROUND_DOWN);//割り算を行い、100桁目を切り捨て
-                                } catch (ArithmeticException f){
+                                } catch (ArithmeticException f) {
                                     resultValue = BigDecimal.ZERO;
                                 }
-                            }else {
+                            } else {
                                 try {
                                     resultValue = resultValue.divide
                                             (value, 100, BigDecimal.ROUND_DOWN);//割り算を行い、100桁目を切り捨て
@@ -350,10 +351,11 @@ public class jikken extends JFrame {//クラス
                         //resultStr2に全てを数字表記にして代入
                         //正数で0.0001超えand99~9未満or負数で-0.001未満and-99~9超え
                         if (radio16.getState()) {
-                               long dec = Long.parseLong(resultValue2.toPlainString());
-                                String resultValue3 = Long.toHexString(dec);
-                                result.setText(resultValue3);
-                        }else if ((resultValue2.compareTo(BigDecimal.valueOf(0.001)) > 0
+                            resultValue = resultValue.setScale(0,BigDecimal.ROUND_DOWN);
+                            long dec = Long.parseLong(resultValue.toPlainString());
+                            String resultValue3 = Long.toHexString(dec);
+                            result.setText(resultValue3.toUpperCase());
+                        } else if ((resultValue2.compareTo(BigDecimal.valueOf(0.001)) > 0
                                 && resultValue2.compareTo(BigDecimal.valueOf(9999999999999999d)) < 0)
                                 || (resultValue2.compareTo(BigDecimal.valueOf(-0.001)) < 0
                                 && resultValue2.compareTo(BigDecimal.valueOf(-9999999999999999d)) > 0)
@@ -368,16 +370,16 @@ public class jikken extends JFrame {//クラス
                 } else {//格納されていなかったら
                     try {
                         if (radio16.getState()) {
-                            resultLongValue = Long.parseLong(result.getText(), 16);
+                            resultLongValue = Long.valueOf(result.getText(), 16);
                             resultValue = new BigDecimal(resultLongValue);
-
                         } else {
                             resultValue = new BigDecimal(result.getText());
 
                         }
                         //演算子ボタン入力前の値にテキスト領域にある文字列を代入
                     } catch (NumberFormatException d) {
-                        resultValue = BigDecimal.valueOf(0);
+                        resultValue = resultValue.setScale(0,BigDecimal.ROUND_DOWN);//小数点以下切捨て
+                        resultLongValue = Long.parseLong(resultValue.toPlainString());
                     }
                 }
                 if (!this.getText().equals("＝")) {
@@ -391,6 +393,5 @@ public class jikken extends JFrame {//クラス
 
     public static void main(String[] args) {
         new jikken();//Javaアプリケーションでの起動
-        System.out.println();
     }
 }
